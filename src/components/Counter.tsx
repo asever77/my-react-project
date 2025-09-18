@@ -13,7 +13,7 @@ const Counter = () => {
   return (
     <div className='flex flex-col items-center p-6 bg-white rounded-lg shadow-md'>
       <p className='text-xl font-bold mb-4'>현재 카운트: {count}</p>
-      <Button label='+1 증가' onClick={incrementCount} />
+      <Button label='+1 증가' onClick={incrementCount} size="small" color='danger' />
     </div>
   )
 }
