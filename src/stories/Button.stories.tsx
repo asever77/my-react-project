@@ -19,6 +19,13 @@ const meta = {
     // 공통 args: 모든 스토리에 기본적으로 적용됩니다.
     onClick: fn(),             // 클릭 이벤트를 테스트하기 위한 mock 함수
     label: '버튼',             // 모든 버튼의 기본 라벨
+    color: 'primary',
+    size: 'medium',
+    round: 'rounded',
+    variant: 'filled',
+    shadow: 'none',
+    icon: 'none',
+    iconName: 'Play',
   },
   argTypes: {
     // 각 prop에 대한 Storybook 컨트롤을 설정합니다.
@@ -59,9 +66,8 @@ const meta = {
       },
     },
     iconName: {
-      options: Object.keys(Icon), // `Icon` 객체의 키를 옵션으로 사용
       control: {
-        type: 'select',
+        type: 'text',
       },
     },
   },
@@ -101,9 +107,9 @@ export const Sizes: Story = {
 export const WithIcons: Story = {
   render: (args) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <Button {...args} label="Icon Before" icon="before" iconName="SearchIcon" />
-      <Button {...args} label="Icon After" icon="after" iconName="SearchIcon" />
-      <Button {...args} icon="only" iconName="SearchIcon" />
+      <Button {...args} label="Icon Before" icon="before" iconName="Play" />
+      <Button {...args} label="Icon After" icon="after" iconName="Play" />
+      <Button {...args} icon="only" iconName="Play" />
     </div>
   ),
 };

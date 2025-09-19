@@ -1,37 +1,29 @@
 // src/components/Button
 
-import React from 'react';
-import clsx from 'clsx';
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { Icon } from './Icons';
 
+const buttonVariants = cva(
+  "inline-flex items-center transition-colors whitespace-nowrap"
+)
 //리터럴 유니온 타입: 미리 정해진 문자열만 허용
 type ButtonColor = 'primary' | 'secondary' | 'danger';
 type ButtonSize = 'small' | 'medium' | 'large'; 
 type ButtonRound = 'rounded' | 'square' | 'circular' ;
-type ButtonVariant = 'filled' | 'outlined' | 'text';
+type ButtonVariant = 'filled' | 'outlined' | 'text' | 'ghost';
 type ButtonShadow = 'none' | 'small' | 'medium' | 'large';
 type ButtonIcon = 'none' | 'before' | 'after' | 'only';
 
-// case 1: 아이콘이 없는 경우
-type ButtonWithoutIconProps = {
-  icon?: 'none'; // 'none'만 허용
-  iconName?: never; // iconName은 절대 존재할 수 없음
-};
-
-// case 2: 아이콘이 있는 경우
-type ButtonWithIconProps = {
-  icon: 'before' | 'after' | 'only'; // 'none'을 제외한 값만 허용 (필수)
-  iconName: keyof typeof Icon; // iconName은 필수로 존재해야 함
-};
-
-
+//필수값 아니면 ?를 붙입니다
 interface BaseButtonProps {
   /** 버튼 이름 */
   label: string;
   /** 클릭 시 실행할 함수 */
-  onClick: () => void; // onClick  함수를 Props로 받습니다.
+  onClick: () => void;
   /** 버튼 색상 */
-  color?: ButtonColor; //필수값은 아니므로 ?를 붙입니다
+  color?: ButtonColor; 
   /** 버튼 크기 */
   size?: ButtonSize;
   /** 비활성화 여부 */
@@ -42,13 +34,48 @@ interface BaseButtonProps {
   variant?: ButtonVariant;
   /** 버튼 그림자 스타일 */
   shadow?: ButtonShadow;
+  /** 버튼 아이콘 스타일 */
+  icon?: ButtonIcon;
+  /** 버튼 아이콘 이름 */
+  iconName?: string; 
 }
 
-export type ButtonProps = BaseButtonProps & (ButtonWithoutIconProps | ButtonWithIconProps);
-
-
-const Button = ({ label, onClick, color = 'primary', size = 'medium', disabled = false, round = 'rounded', variant = 'filled', shadow = 'none', icon = 'none', iconName }: ButtonProps) => {
+const Button = ({ 
+  label, 
+  onClick, 
+  color = 'primary', 
+  size = 'medium', 
+  disabled = false, 
+  round = 'rounded', 
+  variant = 'filled', 
+  shadow = 'none', 
+  icon = 'none', 
+  iconName 
+}: BaseButtonProps) => {
+  // icon size
   const IconComponent = iconName ? Icon[iconName] : null;
+  const iconSizeMap = {
+    'small': 'w-4 h-4', 
+    'medium': 'w-6 h-6',
+    'large': 'w-8 h-8', 
+  }
+  const iconsClass = iconSizeMap[size] || 'w-4 h-4';
+
+  // font size
+  const fontSizeMap = {
+    'small': 'text-xs', 
+    'medium': 'text-base',
+    'large': 'text-lg', 
+  }
+  const fontClass = fontSizeMap[size] || 'text-base';
+
+  // round size
+  const roundSizeMap = {
+    'small': round === 'rounded' ? 'rounded-xs' : '', 
+    'medium': 'rounded-md',
+    'large': 'rounded-lg', 
+  }
+  const roundClass = roundSizeMap[size] || 'rounded-md';
 
   const getButtonColorStyles = (buttonColor: ButtonColor) => {
     switch (buttonColor) {
@@ -132,7 +159,7 @@ const Button = ({ label, onClick, color = 'primary', size = 'medium', disabled =
     }
   };
 
-  const baseStyles = 'flex items-center transition-colors font-medium';
+  const baseStyles = 'flex items-center transition-colors';
   const colorStyles = getButtonColorStyles(color);
   const sizeStyles = getButtonSizeStyles(size);
   const roundStyles = getButtonRoundStyles(round);
@@ -142,12 +169,14 @@ const Button = ({ label, onClick, color = 'primary', size = 'medium', disabled =
 
   const className = clsx(
     baseStyles,
+    fontClass,
     colorStyles,
     sizeStyles,
     roundStyles,
     variantStyles,
     shadowStyles,
     iconStyles,
+    roundClass,
     disabled && 'cursor-not-allowed opacity-50' // 비활성화 시 스타일
   );
 
@@ -157,8 +186,8 @@ const Button = ({ label, onClick, color = 'primary', size = 'medium', disabled =
       onClick={onClick} // 2. 받아온 onClick 함수를 버튼의 onClick 이벤트에 연결합니다.
       disabled={disabled}
     >
-      <span className={icon === 'before' || icon === 'after' || icon === 'only' ? '' : 'hidden'}>
-        {icon !== 'none' && IconComponent && <IconComponent className="w-4 h-4" />}
+      <span className={icon !== 'none' ? '' : 'hidden'}>
+        {icon !== 'none' && IconComponent && <IconComponent className={iconsClass} />}
       </span>
       <span className={icon === 'only' ? 'sr-only' : ''}>{/* sr-only: 화면에 보이지 않지만 스크린 리더에는 읽히도록 함 */}
         {label}
